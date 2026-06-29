@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>🌟 Kids' Homework Timer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@700&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9e7b2, #f5d0a9);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Comic Neue', cursive;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff9f0;
+            border-radius: 70px 70px 70px 70px;
+            padding: 40px 35px 50px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2), inset 0 5px 10px rgba(255,255,255,0.7);
+            border: 5px solid #ffb347;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.01);
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.4rem;
+            color: #d45a3a;
+            text-shadow: 3px 3px 0 #ffd966;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .subhead {
+            font-size: 1.1rem;
+            color: #7b4b3a;
+            background: #fee3c0;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 40px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            padding: 12px 18px;
+            border: 3px solid #ffb882;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-family: 'Comic Neue', cursive;
+            background: #fffcf5;
+            outline: none;
+            flex: 1 1 130px;
+            transition: 0.2s;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .input-group input:focus {
+            border-color: #f57c3a;
+            background: #fff5e6;
+        }
+
+        .input-group input::placeholder {
+            color: #b38b7a;
+            font-size: 0.9rem;
+        }
+
+        .timer-display {
+            margin: 20px 0 10px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .timer-svg {
+            width: 200px;
+            height: 200px;
+            transform: rotate(-90deg);
+        }
+
+        .timer-svg circle {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+        }
+
+        .bg-circle {
+            stroke: #ffe0c0;
+        }
+
+        .progress-circle {
+            stroke: #ff7b3a;
+            stroke-dasharray: 502.4;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.3s ease, stroke 0.3s;
+        }
+
+        .time-text {
+            position: absolute;
+            font-family: 'Fredoka One', cursive;
+            font-size: 3.6rem;
+            color: #4d2e1b;
+            letter-spacing: 2px;
+            background: rgba(255, 245, 225, 0.7);
+            padding: 5px 15px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+
+        .task-label {
+            font-size: 1.5rem;
+            color: #a3522e;
+            margin-top: 5px;
+            min-height: 3rem;
+            font-weight: 700;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0 15px;
+        }
+
+        .btn {
+            border: none;
+            background: #ffb882;
+            padding: 14px 30px;
+            border-radius: 60px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #4d2e1b;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #d17a48, 0 8px 14px rgba(0,0,0,0.15);
+            transition: all 0.08s linear;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #d17a48;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #d17a48;
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            background: #fecb6e;
+            box-shadow: 0 6px 0 #b87c3a;
+        }
+
+        .btn-primary:active {
+            box-shadow: 0 2px 0 #b87c3a;
+        }
+
+        .btn-success {
+            background: #7bc47f;
+            box-shadow: 0 6px 0 #3d7a41;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: #f7a1a1;
+            box-shadow: 0 6px 0 #b35f5f;
+            color: #4d2e1b;
+        }
+
+        .status-msg {
+            font-size: 1.2rem;
+            background: #fce4d6;
+            padding: 8px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 10px;
+            color: #8a4a2e;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @media (max-width: 450px) {
+            .card { padding: 25px 18px; }
+            h1 { font-size: 1.8rem; }
+            .timer-svg { width: 160px; height: 160px; }
+            .time-text { font-size: 2.8rem; }
+            .btn { padding: 12px 20px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="card">
+        <h1>📚 Homework Timer</h1>
+        <div class="subhead">⭐ Set your task and start the timer</div>
+
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="e.g. Solve 5 sums" value="5 Math Problems" />
+            <input type="number" id="minutesInput" placeholder="Minutes" value="5" min="1" max="120" />
+        </div>
+
+        <div class="timer-display">
+            <svg class="timer-svg" viewBox="0 0 180 180">
+                <circle class="bg-circle" cx="90" cy="90" r="80" />
+                <circle class="progress-circle" id="progressCircle" cx="90" cy="90" r="80" />
+            </svg>
+            <div class="time-text" id="timeDisplay">05:00</div>
+        </div>
+
+        <div class="task-label" id="taskLabel">📝 5 Math Problems</div>
+
+        <div class="buttons">
+            <button class="btn btn-success" id="startBtn">▶️ Start</button>
+            <button class="btn btn-primary" id="pauseBtn">⏸️ Pause</button>
+            <button class="btn btn-danger" id="resetBtn">🔄 Reset</button>
+        </div>
+
+        <div class="status-msg" id="statusMsg">✨ Ready? Press Start!</div>
+    </div>
+
+    <script>
+        (function() {
+            const taskInput = document.getElementById('taskInput');
+            const minutesInput = document.getElementById('minutesInput');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const progressCircle = document.getElementById('progressCircle');
+            const taskLabel = document.getElementById('taskLabel');
+            const statusMsg = document.getElementById('statusMsg');
+            const startBtn = document.getElementById('startBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            let totalSeconds = 0;
+            let remainingSeconds = 0;
+            let timerInterval = null;
+            let isPaused = false;
+            let isComplete = false;
+
+            // ---- Confetti Setup ----
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            let confettiPieces = [];
+            let animationFrame = null;
+            let isConfettiRunning = false;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class ConfettiPiece {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height - canvas.height;
+                    this.w = Math.random() * 12 + 5;
+                    this.h = Math.random() * 8 + 4;
+                    this.color = `hsl(${Math.random() * 360}, 90%, 60%)`;
+                    this.vy = Math.random() * 4 + 2;
+                    this.vx = (Math.random() - 0.5) * 6;
+                    this.rotation = Math.random() * 360;
+                    this.rotSpeed = (Math.random() - 0.5) * 10;
+                    this.opacity = 1;
+                }
+
+                update() {
+                    this.y += this.vy;
+                    this.x += this.vx;
+                    this.rotation += this.rotSpeed;
+                    this.vx += (Math.random() - 0.5) * 0.2;
+                    if (this.y > canvas.height + 20) {
+                        this.y = -20;
+                        this.x = Math.random() * canvas.width;
+                    }
+                }
+
+                draw(ctx) {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate((this.rotation * Math.PI) / 180);
+                    ctx.globalAlpha = this.opacity;
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+                    ctx.restore();
+                }
+            }
+
+            function startConfetti(count = 150) {
+                if (isConfettiRunning) return;
+                for (let i = 0; i < count; i++) {
+                    confettiPieces.push(new ConfettiPiece());
+                }
+                isConfettiRunning = true;
+                animateConfetti();
+            }
+
+            function animateConfetti() {
+                if (!isConfettiRunning) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let p of confettiPieces) {
+                    p.update();
+                    p.draw(ctx);
+                }
+                if (confettiPieces.length > 400) {
+                    confettiPieces = confettiPieces.slice(-300);
+                }
+                animationFrame = requestAnimationFrame(animateConfetti);
+            }
+
+            function stopConfetti() {
+                isConfettiRunning = false;
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiPieces = [];
+            }
+
+            // ---- Timer Functions ----
+            function updateDisplay() {
+                const mins = Math.floor(remainingSeconds / 60);
+                const secs = remainingSeconds % 60;
+                timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                const circumference = 2 * Math.PI * 80;
+                const offset = circumference * (1 - remainingSeconds / totalSeconds);
+                progressCircle.style.strokeDasharray = circumference;
+                progressCircle.style.strokeDashoffset = offset;
+
+                if (remainingSeconds <= 10 && remainingSeconds > 0) {
+                    progressCircle.style.stroke = '#e74c3c';
+                } else {
+                    progressCircle.style.stroke = '#ff7b3a';
+                }
+            }
+
+            function completeTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isComplete = true;
+                statusMsg.textContent = '🎉 Well done! Homework complete! 🌟';
+                statusMsg.style.background = '#c8f0c8';
+                startConfetti(200);
+                setTimeout(() => startConfetti(100), 1000);
+                setTimeout(() => startConfetti(80), 2000);
+                setTimeout(() => {
+                    if (!isConfettiRunning) startConfetti(60);
+                }, 3000);
+
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.frequency.value = 880;
+                    oscillator.type = 'square';
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                } catch (e) { /* silent */ }
+            }
+
+            function startTimer() {
+                if (timerInterval) return;
+                if (isComplete) {
+                    resetTimer();
+                }
+                if (isPaused) {
+                    isPaused = false;
+                    timerInterval = setInterval(tick, 1000);
+                    statusMsg.textContent = '⏳ Working...';
+                    return;
+                }
+                const mins = parseInt(minutesInput.value) || 5;
+                const task = taskInput.value.trim() || 'Homework';
+                totalSeconds = mins * 60;
+                remainingSeconds = totalSeconds;
+                taskLabel.textContent = `📝 ${task}`;
+                updateDisplay();
+                isPaused = false;
+                isComplete = false;
+                statusMsg.textContent = '⏳ Time is running...';
+                statusMsg.style.background = '#fce4d6';
+                stopConfetti();
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(tick, 1000);
+            }
+
+            function tick() {
+                if (isPaused) return;
+                remainingSeconds--;
+                updateDisplay();
+                if (remainingSeconds <= 0) {
+                    remainingSeconds = 0;
+                    updateDisplay();
+                    completeTimer();
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            }
+
+            function pauseTimer() {
+                if (timerInterval) {
+                    isPaused = true;
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    statusMsg.textContent = '⏸️ Paused';
+                }
+            }
+
+            function resetTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isPaused = false;
+                isComplete = false;
+                stopConfetti();
+                const mins = parseInt(minutesInput.value) || 5;
+                totalSeconds = mins * 60;
+                remainingSeconds = totalSeconds;
+                const task = taskInput.value.trim() || 'Homework';
+                taskLabel.textContent = `📝 ${task}`;
+                updateDisplay();
+                statusMsg.textContent = '🔄 Reset';
+                statusMsg.style.background = '#fce4d6';
+                progressCircle.style.stroke = '#ff7b3a';
+            }
+
+            // ---- Event Listeners ----
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+
+            minutesInput.addEventListener('change', function() {
+                if (!timerInterval && !isPaused && !isComplete) {
+                    resetTimer();
+                }
+            });
+            taskInput.addEventListener('change', function() {
+                if (!timerInterval && !isPaused && !isComplete) {
+                    const task = taskInput.value.trim() || 'Homework';
+                    taskLabel.textContent = `📝 ${task}`;
+                }
+            });
+
+            // ---- Init ----
+            (function init() {
+                const mins = parseInt(minutesInput.value) || 5;
+                totalSeconds = mins * 60;
+                remainingSeconds = totalSeconds;
+                const task = taskInput.value.trim() || 'Homework';
+                taskLabel.textContent = `📝 ${task}`;
+                updateDisplay();
+                statusMsg.textContent = '✨ Ready? Press Start!';
+            })();
+        })();
+    </script>
+
+</body>
+</html>

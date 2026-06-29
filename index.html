@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>🌟 Kids' Homework Timer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet"/>
     <style>
         * {
             margin: 0;
@@ -22,11 +22,16 @@
             padding: 20px;
         }
 
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* ---- Timer Card ---- */
         .card {
             background: #fff9f0;
             border-radius: 70px 70px 70px 70px;
-            padding: 40px 35px 50px;
-            max-width: 500px;
+            padding: 40px 35px 40px;
             width: 100%;
             box-shadow: 0 20px 30px rgba(0,0,0,0.2), inset 0 5px 10px rgba(255,255,255,0.7);
             border: 5px solid #ffb347;
@@ -210,6 +215,81 @@
             color: #8a4a2e;
         }
 
+        /* ---- How to Use Section ---- */
+        .how-to-section {
+            margin-top: 35px;
+            background: #fff9f0;
+            border-radius: 50px 50px 50px 50px;
+            padding: 30px 28px 35px;
+            border: 4px dashed #ffb882;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        .how-to-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            color: #d45a3a;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .how-to-title span {
+            background: #fee3c0;
+            padding: 0 15px;
+            border-radius: 40px;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .step-card {
+            background: #fffcf5;
+            border-radius: 30px;
+            padding: 18px 15px 15px;
+            text-align: center;
+            border: 3px solid #ffe0c0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            border-color: #ffb882;
+        }
+
+        .step-icon {
+            font-size: 2.8rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .step-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            color: #a3522e;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 0.95rem;
+            color: #7b4b3a;
+            line-height: 1.4;
+        }
+
+        .step-desc small {
+            background: #fee3c0;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #8a4a2e;
+        }
+
+        /* ---- Confetti Canvas ---- */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -220,19 +300,41 @@
             z-index: 999;
         }
 
-        @media (max-width: 450px) {
+        /* ---- Mobile ---- */
+        @media (max-width: 500px) {
             .card { padding: 25px 18px; }
             h1 { font-size: 1.8rem; }
             .timer-svg { width: 160px; height: 160px; }
             .time-text { font-size: 2.8rem; }
             .btn { padding: 12px 20px; font-size: 1.1rem; }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .how-to-section {
+                padding: 20px 15px 25px;
+            }
+
+            .how-to-title {
+                font-size: 1.5rem;
+            }
+
+            .step-card {
+                padding: 14px 12px;
+            }
         }
     </style>
 </head>
 <body>
 
+<div class="container">
+
+    <!-- ===== CONFETTI CANVAS ===== -->
     <canvas id="confetti-canvas"></canvas>
 
+    <!-- ===== TIMER CARD ===== -->
     <div class="card">
         <h1>📚 Homework Timer</h1>
         <div class="subhead">⭐ Set your task and start the timer</div>
@@ -261,245 +363,303 @@
         <div class="status-msg" id="statusMsg">✨ Ready? Press Start!</div>
     </div>
 
-    <script>
-        (function() {
-            const taskInput = document.getElementById('taskInput');
-            const minutesInput = document.getElementById('minutesInput');
-            const timeDisplay = document.getElementById('timeDisplay');
-            const progressCircle = document.getElementById('progressCircle');
-            const taskLabel = document.getElementById('taskLabel');
-            const statusMsg = document.getElementById('statusMsg');
-            const startBtn = document.getElementById('startBtn');
-            const pauseBtn = document.getElementById('pauseBtn');
-            const resetBtn = document.getElementById('resetBtn');
+    <!-- ===== HOW TO USE SECTION ===== -->
+    <div class="how-to-section">
+        <div class="how-to-title">
+            <span>📖 How to Use</span>
+        </div>
 
-            let totalSeconds = 0;
-            let remainingSeconds = 0;
-            let timerInterval = null;
-            let isPaused = false;
-            let isComplete = false;
+        <div class="steps-grid">
 
-            // ---- Confetti Setup ----
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            let confettiPieces = [];
-            let animationFrame = null;
-            let isConfettiRunning = false;
+            <div class="step-card">
+                <span class="step-icon">✏️</span>
+                <div class="step-title">Step 1: Type Task</div>
+                <div class="step-desc">
+                    Write your homework name<br />
+                    <small>e.g. "Read 2 Pages"</small>
+                </div>
+            </div>
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+            <div class="step-card">
+                <span class="step-icon">⏱️</span>
+                <div class="step-title">Step 2: Set Minutes</div>
+                <div class="step-desc">
+                    Choose 1–120 minutes<br />
+                    <small>e.g. 5, 10, or 25</small>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <span class="step-icon">▶️</span>
+                <div class="step-title">Step 3: Press Start</div>
+                <div class="step-desc">
+                    Timer begins counting down<br />
+                    <small>Ring shrinks as time passes</small>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <span class="step-icon">🎊</span>
+                <div class="step-title">Step 4: Celebrate!</div>
+                <div class="step-desc">
+                    Confetti rains when done<br />
+                    <small>🎉 Well done! 🎉</small>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- extra tip -->
+        <div style="text-align: center; margin-top: 18px; background: #fee3c0; border-radius: 40px; padding: 10px 18px; font-size: 1rem; color: #7b4b3a;">
+            💡 <strong>Pro Tip:</strong> Use <strong>Pause</strong> for breaks and <strong>Reset</strong> to start a new task.
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================================== -->
+<!-- ======================== JAVASCRIPT ======================== -->
+<!-- ========================================================== -->
+
+<script>
+    (function() {
+        const taskInput = document.getElementById('taskInput');
+        const minutesInput = document.getElementById('minutesInput');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const progressCircle = document.getElementById('progressCircle');
+        const taskLabel = document.getElementById('taskLabel');
+        const statusMsg = document.getElementById('statusMsg');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let totalSeconds = 0;
+        let remainingSeconds = 0;
+        let timerInterval = null;
+        let isPaused = false;
+        let isComplete = false;
+
+        // ---- Confetti Setup ----
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let confettiPieces = [];
+        let animationFrame = null;
+        let isConfettiRunning = false;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiPiece {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.w = Math.random() * 12 + 5;
+                this.h = Math.random() * 8 + 4;
+                this.color = `hsl(${Math.random() * 360}, 90%, 60%)`;
+                this.vy = Math.random() * 4 + 2;
+                this.vx = (Math.random() - 0.5) * 6;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 10;
+                this.opacity = 1;
             }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
 
-            class ConfettiPiece {
-                constructor() {
+            update() {
+                this.y += this.vy;
+                this.x += this.vx;
+                this.rotation += this.rotSpeed;
+                this.vx += (Math.random() - 0.5) * 0.2;
+                if (this.y > canvas.height + 20) {
+                    this.y = -20;
                     this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height - canvas.height;
-                    this.w = Math.random() * 12 + 5;
-                    this.h = Math.random() * 8 + 4;
-                    this.color = `hsl(${Math.random() * 360}, 90%, 60%)`;
-                    this.vy = Math.random() * 4 + 2;
-                    this.vx = (Math.random() - 0.5) * 6;
-                    this.rotation = Math.random() * 360;
-                    this.rotSpeed = (Math.random() - 0.5) * 10;
-                    this.opacity = 1;
-                }
-
-                update() {
-                    this.y += this.vy;
-                    this.x += this.vx;
-                    this.rotation += this.rotSpeed;
-                    this.vx += (Math.random() - 0.5) * 0.2;
-                    if (this.y > canvas.height + 20) {
-                        this.y = -20;
-                        this.x = Math.random() * canvas.width;
-                    }
-                }
-
-                draw(ctx) {
-                    ctx.save();
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate((this.rotation * Math.PI) / 180);
-                    ctx.globalAlpha = this.opacity;
-                    ctx.fillStyle = this.color;
-                    ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
-                    ctx.restore();
                 }
             }
 
-            function startConfetti(count = 150) {
-                if (isConfettiRunning) return;
-                for (let i = 0; i < count; i++) {
-                    confettiPieces.push(new ConfettiPiece());
-                }
-                isConfettiRunning = true;
-                animateConfetti();
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+                ctx.restore();
             }
+        }
 
-            function animateConfetti() {
-                if (!isConfettiRunning) return;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (let p of confettiPieces) {
-                    p.update();
-                    p.draw(ctx);
-                }
-                if (confettiPieces.length > 400) {
-                    confettiPieces = confettiPieces.slice(-300);
-                }
-                animationFrame = requestAnimationFrame(animateConfetti);
+        function startConfetti(count = 150) {
+            if (isConfettiRunning) return;
+            for (let i = 0; i < count; i++) {
+                confettiPieces.push(new ConfettiPiece());
             }
+            isConfettiRunning = true;
+            animateConfetti();
+        }
 
-            function stopConfetti() {
-                isConfettiRunning = false;
-                if (animationFrame) {
-                    cancelAnimationFrame(animationFrame);
-                    animationFrame = null;
-                }
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                confettiPieces = [];
+        function animateConfetti() {
+            if (!isConfettiRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let p of confettiPieces) {
+                p.update();
+                p.draw(ctx);
             }
-
-            // ---- Timer Functions ----
-            function updateDisplay() {
-                const mins = Math.floor(remainingSeconds / 60);
-                const secs = remainingSeconds % 60;
-                timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
-                const circumference = 2 * Math.PI * 80;
-                const offset = circumference * (1 - remainingSeconds / totalSeconds);
-                progressCircle.style.strokeDasharray = circumference;
-                progressCircle.style.strokeDashoffset = offset;
-
-                if (remainingSeconds <= 10 && remainingSeconds > 0) {
-                    progressCircle.style.stroke = '#e74c3c';
-                } else {
-                    progressCircle.style.stroke = '#ff7b3a';
-                }
+            if (confettiPieces.length > 400) {
+                confettiPieces = confettiPieces.slice(-300);
             }
+            animationFrame = requestAnimationFrame(animateConfetti);
+        }
 
-            function completeTimer() {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                isComplete = true;
-                statusMsg.textContent = '🎉 Well done! Homework complete! 🌟';
-                statusMsg.style.background = '#c8f0c8';
-                startConfetti(200);
-                setTimeout(() => startConfetti(100), 1000);
-                setTimeout(() => startConfetti(80), 2000);
-                setTimeout(() => {
-                    if (!isConfettiRunning) startConfetti(60);
-                }, 3000);
-
-                try {
-                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    oscillator.frequency.value = 880;
-                    oscillator.type = 'square';
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.2);
-                } catch (e) { /* silent */ }
+        function stopConfetti() {
+            isConfettiRunning = false;
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
             }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiPieces = [];
+        }
 
-            function startTimer() {
-                if (timerInterval) return;
-                if (isComplete) {
-                    resetTimer();
-                }
-                if (isPaused) {
-                    isPaused = false;
-                    timerInterval = setInterval(tick, 1000);
-                    statusMsg.textContent = '⏳ Working...';
-                    return;
-                }
-                const mins = parseInt(minutesInput.value) || 5;
-                const task = taskInput.value.trim() || 'Homework';
-                totalSeconds = mins * 60;
-                remainingSeconds = totalSeconds;
-                taskLabel.textContent = `📝 ${task}`;
-                updateDisplay();
-                isPaused = false;
-                isComplete = false;
-                statusMsg.textContent = '⏳ Time is running...';
-                statusMsg.style.background = '#fce4d6';
-                stopConfetti();
-                if (timerInterval) clearInterval(timerInterval);
-                timerInterval = setInterval(tick, 1000);
-            }
+        // ---- Timer Functions ----
+        function updateDisplay() {
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+            timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
-            function tick() {
-                if (isPaused) return;
-                remainingSeconds--;
-                updateDisplay();
-                if (remainingSeconds <= 0) {
-                    remainingSeconds = 0;
-                    updateDisplay();
-                    completeTimer();
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                }
-            }
+            const circumference = 2 * Math.PI * 80;
+            const offset = circumference * (1 - remainingSeconds / totalSeconds);
+            progressCircle.style.strokeDasharray = circumference;
+            progressCircle.style.strokeDashoffset = offset;
 
-            function pauseTimer() {
-                if (timerInterval) {
-                    isPaused = true;
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    statusMsg.textContent = '⏸️ Paused';
-                }
-            }
-
-            function resetTimer() {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                isPaused = false;
-                isComplete = false;
-                stopConfetti();
-                const mins = parseInt(minutesInput.value) || 5;
-                totalSeconds = mins * 60;
-                remainingSeconds = totalSeconds;
-                const task = taskInput.value.trim() || 'Homework';
-                taskLabel.textContent = `📝 ${task}`;
-                updateDisplay();
-                statusMsg.textContent = '🔄 Reset';
-                statusMsg.style.background = '#fce4d6';
+            if (remainingSeconds <= 10 && remainingSeconds > 0) {
+                progressCircle.style.stroke = '#e74c3c';
+            } else {
                 progressCircle.style.stroke = '#ff7b3a';
             }
+        }
 
-            // ---- Event Listeners ----
-            startBtn.addEventListener('click', startTimer);
-            pauseBtn.addEventListener('click', pauseTimer);
-            resetBtn.addEventListener('click', resetTimer);
+        function completeTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isComplete = true;
+            statusMsg.textContent = '🎉 Well done! Homework complete! 🌟';
+            statusMsg.style.background = '#c8f0c8';
+            startConfetti(200);
+            setTimeout(() => startConfetti(100), 1000);
+            setTimeout(() => startConfetti(80), 2000);
+            setTimeout(() => {
+                if (!isConfettiRunning) startConfetti(60);
+            }, 3000);
 
-            minutesInput.addEventListener('change', function() {
-                if (!timerInterval && !isPaused && !isComplete) {
-                    resetTimer();
-                }
-            });
-            taskInput.addEventListener('change', function() {
-                if (!timerInterval && !isPaused && !isComplete) {
-                    const task = taskInput.value.trim() || 'Homework';
-                    taskLabel.textContent = `📝 ${task}`;
-                }
-            });
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 880;
+                oscillator.type = 'square';
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.2);
+            } catch (e) { /* silent */ }
+        }
 
-            // ---- Init ----
-            (function init() {
-                const mins = parseInt(minutesInput.value) || 5;
-                totalSeconds = mins * 60;
-                remainingSeconds = totalSeconds;
+        function startTimer() {
+            if (timerInterval) return;
+            if (isComplete) {
+                resetTimer();
+            }
+            if (isPaused) {
+                isPaused = false;
+                timerInterval = setInterval(tick, 1000);
+                statusMsg.textContent = '⏳ Working...';
+                return;
+            }
+            const mins = parseInt(minutesInput.value) || 5;
+            const task = taskInput.value.trim() || 'Homework';
+            totalSeconds = mins * 60;
+            remainingSeconds = totalSeconds;
+            taskLabel.textContent = `📝 ${task}`;
+            updateDisplay();
+            isPaused = false;
+            isComplete = false;
+            statusMsg.textContent = '⏳ Time is running...';
+            statusMsg.style.background = '#fce4d6';
+            stopConfetti();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(tick, 1000);
+        }
+
+        function tick() {
+            if (isPaused) return;
+            remainingSeconds--;
+            updateDisplay();
+            if (remainingSeconds <= 0) {
+                remainingSeconds = 0;
+                updateDisplay();
+                completeTimer();
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                isPaused = true;
+                clearInterval(timerInterval);
+                timerInterval = null;
+                statusMsg.textContent = '⏸️ Paused';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isPaused = false;
+            isComplete = false;
+            stopConfetti();
+            const mins = parseInt(minutesInput.value) || 5;
+            totalSeconds = mins * 60;
+            remainingSeconds = totalSeconds;
+            const task = taskInput.value.trim() || 'Homework';
+            taskLabel.textContent = `📝 ${task}`;
+            updateDisplay();
+            statusMsg.textContent = '🔄 Reset';
+            statusMsg.style.background = '#fce4d6';
+            progressCircle.style.stroke = '#ff7b3a';
+        }
+
+        // ---- Event Listeners ----
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+        minutesInput.addEventListener('change', function() {
+            if (!timerInterval && !isPaused && !isComplete) {
+                resetTimer();
+            }
+        });
+        taskInput.addEventListener('change', function() {
+            if (!timerInterval && !isPaused && !isComplete) {
                 const task = taskInput.value.trim() || 'Homework';
                 taskLabel.textContent = `📝 ${task}`;
-                updateDisplay();
-                statusMsg.textContent = '✨ Ready? Press Start!';
-            })();
+            }
+        });
+
+        // ---- Init ----
+        (function init() {
+            const mins = parseInt(minutesInput.value) || 5;
+            totalSeconds = mins * 60;
+            remainingSeconds = totalSeconds;
+            const task = taskInput.value.trim() || 'Homework';
+            taskLabel.textContent = `📝 ${task}`;
+            updateDisplay();
+            statusMsg.textContent = '✨ Ready? Press Start!';
         })();
-    </script>
+    })();
+</script>
 
 </body>
 </html>
